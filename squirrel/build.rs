@@ -56,6 +56,7 @@ fn main() {
         "squirrel/std/sqstdsystem.cpp",
         "squirrel/std/sqstdstring.cpp",
         "squirrel/std/sqstdaux.cpp",
-        "squirrel/std/sqstdrex.cpp"
+        "squirrel/std/sqstdrex.cpp",
+        "squirrel/helper.cpp"
     ]);
 }
