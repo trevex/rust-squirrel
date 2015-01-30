@@ -1,5 +1,6 @@
-#include <stdarg.h>
-#include <string>
+#include <cstdio>
+#include <cstdarg>
+#include <cstring>
 #include "squirrel.h"
 
 // helper functions based on Henry's clean implementation: http://www.henrywrites.com/blog/post/8/Embedding_Squirrel_Lesson_2
