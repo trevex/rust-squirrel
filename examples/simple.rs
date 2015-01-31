@@ -2,8 +2,9 @@ extern crate squirrel;
 
 fn main() {
     let mut vm = squirrel::VM::new();
-    vm.func0("hello", || {
-        println!("Hello, world!");
+    let name = "Peter";
+    vm.func0("hello", |&:| {
+        println!("Hello, {}!", name);
     });
     vm.eval("
         ::hello();
