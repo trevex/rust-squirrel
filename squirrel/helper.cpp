@@ -14,6 +14,8 @@ SQUIRREL_API void sq_helper_compile_error(HSQUIRRELVM vm, const SQChar* descript
 SQUIRREL_API void sq_helper_print_function(HSQUIRRELVM vm, const SQChar *format, ...);
 SQUIRREL_API void sq_helper_error_function(HSQUIRRELVM vm, const SQChar *format, ...);
 SQUIRREL_API void sq_helper_setup_default_callbacks(HSQUIRRELVM vm);
+SQUIRREL_API void sq_helper_eval(HSQUIRRELVM vm, const SQChar* source);
+SQUIRREL_API void* sq_helper_get_null();
 #ifdef __cplusplus
 }
 #endif
@@ -74,14 +76,18 @@ void sq_helper_setup_default_callbacks(HSQUIRRELVM vm) {
     sq_setcompilererrorhandler(vm, sq_helper_compile_error);
     sq_newclosure(vm, sq_helper_runtime_error, 0);
     sq_seterrorhandler(vm);
+}
 
-    // TODO: remove test code
-    const SQChar *program = "::print(\"Hello World!\\n\");";
-    if (SQ_FAILED(sq_compilebuffer(vm, program, sizeof(SQChar) * strlen(program), "program", SQTrue))) {
+void sq_helper_eval(HSQUIRRELVM vm, const SQChar* source) {
+    if (SQ_FAILED(sq_compilebuffer(vm, source, sizeof(SQChar) * strlen(source), "eval", SQTrue))) {
         return;
     }
     sq_pushroottable(vm);
     if (SQ_FAILED(sq_call(vm, 1, SQFalse, SQTrue))) {
         return;
     }
+}
+
+void* sq_helper_get_null() {
+    return NULL;
 }

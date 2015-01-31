@@ -1,4 +1,4 @@
-#![feature(libc)]
+#![feature(libc, std_misc)]
 extern crate libc;
 
 use std::ffi::CString;
@@ -11,14 +11,14 @@ mod ffi;
 mod wrapper {
     use ::std::mem;
     use ::ffi;
+    use ::libc;
 
     pub extern "C" fn func0<F, R>(vm: ffi::HSQUIRRELVM) -> ffi::SQInteger where F: Fn() -> R {
         unsafe {
-            let mut ptr: ffi::SQUserPointer;
-            ffi::sq_getuserdata(vm, -1, mem::transmute(&ptr), mem::transmute(0)); // TODO: last arguments should be NULL, find better way
-            let func: F = mem::transmute(ptr);
-            //let func: F = ptr as F;
-            func();
+            let ptr: ffi::SQUserPointer = ffi::sq_helper_get_null();
+            ffi::sq_getuserdata(vm, -1, mem::transmute(&ptr), ffi::sq_helper_get_null() as *mut ffi::SQUserPointer);
+            let func_ptr: *const F = ptr as *const libc::c_void as *const F;
+            (*func_ptr)();
         }
         0
     }
@@ -31,9 +31,16 @@ pub struct VM {
 impl VM {
     pub fn new() -> VM {
         unsafe {
-            let mut vm = ffi::sq_open(1024);
+            let vm = ffi::sq_open(1024);
             ffi::sq_helper_setup_default_callbacks(vm);
             VM { raw: vm }
+        }
+    }
+
+    pub fn eval(&mut self, source: &str) {
+        let c_source = CString::from_slice(source.as_bytes());
+        unsafe {
+            ffi::sq_helper_eval(self.raw, c_source.as_slice_with_nul().as_ptr());
         }
     }
 
@@ -42,17 +49,18 @@ impl VM {
     }
 
     fn push_function<F>(&mut self, name: &str, func: F, wrapper: extern "C" fn(ffi::HSQUIRRELVM) -> ffi::SQInteger) {
-        let c_str = CString::from_slice(name.as_bytes());
+        let c_name = CString::from_slice(name.as_bytes());
         unsafe {
             ffi::sq_pushroottable(self.raw);
-            ffi::sq_pushstring(self.raw, c_str.as_ptr(), -1);
+            ffi::sq_pushstring(self.raw, c_name.as_slice_with_nul().as_ptr(), -1);
             let user_ptr = ffi::sq_newuserdata(self.raw, mem::size_of::<F>() as ffi::SQUnsignedInteger);
             ptr::write(mem::transmute(user_ptr), func);
-            ffi::sq_newclosure(self.raw, Some(wrapper), 0);
+            ffi::sq_newclosure(self.raw, Some(wrapper), 1);
             ffi::sq_newslot(self.raw, -3, 0);
             ffi::sq_pop(self.raw, 1);
         }
     }
+
 }
 
 impl Drop for VM {
@@ -66,7 +74,8 @@ impl Drop for VM {
 #[test]
 fn starting_squirrel() {
     let mut vm = VM::new();
-    vm.func0("test", || {
+    vm.func0("what", || {
         println!("Hello, world!");
     });
+    vm.eval("::what();");
 }

@@ -345,4 +345,6 @@ extern "C" {
 
     // HELPER
     pub fn sq_helper_setup_default_callbacks(v: HSQUIRRELVM) -> ();
+    pub fn sq_helper_eval(v: HSQUIRRELVM, source: *const SQChar) -> ();
+    pub fn sq_helper_get_null() -> *mut ::libc::c_void;
 }
