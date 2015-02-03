@@ -6,7 +6,11 @@ fn main() {
     vm.func0("hello", |&:| {
         println!("Hello, {}!", name);
     });
+    vm.func0("foo", || {
+        println!("Something else...");    
+    });
     vm.eval("
-        ::hello();
+        ::hello();\n
+        ::foo();\n
     ");
 }

@@ -1,13 +1,20 @@
-pub type SQInteger = ::libc::c_longlong;
-pub type SQUnsignedInteger = ::libc::c_ulonglong;
-pub type SQHash = ::libc::c_ulonglong;
-pub type SQInt32 = ::libc::c_int;
-pub type SQUnsignedInteger32 = ::libc::c_uint;
-pub type SQFloat = ::libc::c_float;
-pub type SQRawObjectVal = ::libc::c_longlong;
-pub type SQUserPointer = *mut ::libc::c_void;
+use ::libc::{c_longlong, c_uint, c_ulonglong, c_int, c_void, c_float, c_char};
+use ::std::mem::{transmute, zeroed};
+use ::std::default::{Default};
+use ::std::option::{Option};
+
+pub type SQChar = c_char;
+pub type SQInteger = c_longlong;
+pub type SQUnsignedInteger = c_ulonglong;
+pub type SQHash = c_ulonglong;
+pub type SQInt32 = c_int;
+pub type SQUnsignedInteger32 = c_uint;
+pub type SQFloat = c_float;
+pub type SQRawObjectVal = c_longlong;
+pub type SQUserPointer = *mut c_void;
 pub type SQBool = SQUnsignedInteger;
 pub type SQRESULT = SQInteger;
+
 pub enum Struct_SQVM { }
 pub enum Struct_SQTable { }
 pub enum Struct_SQArray { }
@@ -22,28 +29,30 @@ pub enum Struct_SQClass { }
 pub enum Struct_SQInstance { }
 pub enum Struct_SQDelegable { }
 pub enum Struct_SQOuter { }
-pub type SQChar = ::libc::c_char;
-pub type Enum_tagSQObjectType = ::libc::c_uint;
-pub const OT_NULL: ::libc::c_uint = 16777217;
-pub const OT_INTEGER: ::libc::c_uint = 83886082;
-pub const OT_FLOAT: ::libc::c_uint = 83886084;
-pub const OT_BOOL: ::libc::c_uint = 16777224;
-pub const OT_STRING: ::libc::c_uint = 134217744;
-pub const OT_TABLE: ::libc::c_uint = 167772192;
-pub const OT_ARRAY: ::libc::c_uint = 134217792;
-pub const OT_USERDATA: ::libc::c_uint = 167772288;
-pub const OT_CLOSURE: ::libc::c_uint = 134217984;
-pub const OT_NATIVECLOSURE: ::libc::c_uint = 134218240;
-pub const OT_GENERATOR: ::libc::c_uint = 134218752;
-pub const OT_USERPOINTER: ::libc::c_uint = 2048;
-pub const OT_THREAD: ::libc::c_uint = 134221824;
-pub const OT_FUNCPROTO: ::libc::c_uint = 134225920;
-pub const OT_CLASS: ::libc::c_uint = 134234112;
-pub const OT_INSTANCE: ::libc::c_uint = 167804928;
-pub const OT_WEAKREF: ::libc::c_uint = 134283264;
-pub const OT_OUTER: ::libc::c_uint = 134348800;
-pub type SQObjectType = Enum_tagSQObjectType;
 pub enum Struct_SQWeakRef { }
+
+pub type Enum_tagSQObjectType = c_uint;
+pub const OT_NULL: c_uint = 16777217;
+pub const OT_INTEGER: c_uint = 83886082;
+pub const OT_FLOAT: c_uint = 83886084;
+pub const OT_BOOL: c_uint = 16777224;
+pub const OT_STRING: c_uint = 134217744;
+pub const OT_TABLE: c_uint = 167772192;
+pub const OT_ARRAY: c_uint = 134217792;
+pub const OT_USERDATA: c_uint = 167772288;
+pub const OT_CLOSURE: c_uint = 134217984;
+pub const OT_NATIVECLOSURE: c_uint = 134218240;
+pub const OT_GENERATOR: c_uint = 134218752;
+pub const OT_USERPOINTER: c_uint = 2048;
+pub const OT_THREAD: c_uint = 134221824;
+pub const OT_FUNCPROTO: c_uint = 134225920;
+pub const OT_CLASS: c_uint = 134234112;
+pub const OT_INSTANCE: c_uint = 167804928;
+pub const OT_WEAKREF: c_uint = 134283264;
+pub const OT_OUTER: c_uint = 134348800;
+pub type SQObjectType = Enum_tagSQObjectType;
+
+
 #[repr(C)]
 #[derive(Copy)]
 pub struct Union_tagSQObjectValue {
@@ -51,91 +60,97 @@ pub struct Union_tagSQObjectValue {
 }
 impl Union_tagSQObjectValue {
     pub unsafe fn pTable(&mut self) -> *mut *mut Struct_SQTable {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pArray(&mut self) -> *mut *mut Struct_SQArray {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pClosure(&mut self) -> *mut *mut Struct_SQClosure {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pOuter(&mut self) -> *mut *mut Struct_SQOuter {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pGenerator(&mut self) -> *mut *mut Struct_SQGenerator {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pNativeClosure(&mut self)
      -> *mut *mut Struct_SQNativeClosure {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pString(&mut self) -> *mut *mut Struct_SQString {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pUserData(&mut self) -> *mut *mut Struct_SQUserData {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn nInteger(&mut self) -> *mut SQInteger {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn fFloat(&mut self) -> *mut SQFloat {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pUserPointer(&mut self) -> *mut SQUserPointer {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pFunctionProto(&mut self)
      -> *mut *mut Struct_SQFunctionProto {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pRefCounted(&mut self) -> *mut *mut Struct_SQRefCounted {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pDelegable(&mut self) -> *mut *mut Struct_SQDelegable {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pThread(&mut self) -> *mut *mut Struct_SQVM {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pClass(&mut self) -> *mut *mut Struct_SQClass {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pInstance(&mut self) -> *mut *mut Struct_SQInstance {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn pWeakRef(&mut self) -> *mut *mut Struct_SQWeakRef {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
     pub unsafe fn raw(&mut self) -> *mut SQRawObjectVal {
-        ::std::mem::transmute(&self._bindgen_data_)
+        transmute(&self._bindgen_data_)
     }
 }
-impl ::std::default::Default for Union_tagSQObjectValue {
-    fn default() -> Union_tagSQObjectValue { unsafe { ::std::mem::zeroed() } }
+impl Default for Union_tagSQObjectValue {
+    fn default() -> Union_tagSQObjectValue { unsafe { zeroed() } }
 }
 pub type SQObjectValue = Union_tagSQObjectValue;
+
+
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct_tagSQObject {
     pub _type: SQObjectType,
     pub _unVal: SQObjectValue,
 }
-impl ::std::default::Default for Struct_tagSQObject {
-    fn default() -> Struct_tagSQObject { unsafe { ::std::mem::zeroed() } }
+impl Default for Struct_tagSQObject {
+    fn default() -> Struct_tagSQObject { unsafe { zeroed() } }
 }
 pub type SQObject = Struct_tagSQObject;
+
+
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct_tagSQMemberHandle {
     pub _static: SQBool,
     pub _index: SQInteger,
 }
-impl ::std::default::Default for Struct_tagSQMemberHandle {
+impl Default for Struct_tagSQMemberHandle {
     fn default() -> Struct_tagSQMemberHandle {
-        unsafe { ::std::mem::zeroed() }
+        unsafe { zeroed() }
     }
 }
 pub type SQMemberHandle = Struct_tagSQMemberHandle;
+
+
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct_tagSQStackInfos {
@@ -143,42 +158,25 @@ pub struct Struct_tagSQStackInfos {
     pub source: *const SQChar,
     pub line: SQInteger,
 }
-impl ::std::default::Default for Struct_tagSQStackInfos {
-    fn default() -> Struct_tagSQStackInfos { unsafe { ::std::mem::zeroed() } }
+impl Default for Struct_tagSQStackInfos {
+    fn default() -> Struct_tagSQStackInfos { unsafe { zeroed() } }
 }
 pub type SQStackInfos = Struct_tagSQStackInfos;
+
+
 pub type HSQUIRRELVM = *mut Struct_SQVM;
 pub type HSQOBJECT = SQObject;
 pub type HSQMEMBERHANDLE = SQMemberHandle;
-pub type SQFUNCTION =
-    ::std::option::Option<extern "C" fn(arg1: HSQUIRRELVM) -> SQInteger>;
-pub type SQRELEASEHOOK =
-    ::std::option::Option<extern "C" fn(arg1: SQUserPointer, size: SQInteger)
-                              -> SQInteger>;
-pub type SQCOMPILERERROR =
-    ::std::option::Option<extern "C" fn
-                              (arg1: HSQUIRRELVM, arg2: *const SQChar,
-                               arg3: *const SQChar, arg4: SQInteger,
-                               arg5: SQInteger) -> ()>;
-pub type SQPRINTFUNCTION =
-    ::std::option::Option<extern "C" fn
-                              (arg1: HSQUIRRELVM, arg2: *const SQChar, ...)
-                              -> ()>;
-pub type SQDEBUGHOOK =
-    ::std::option::Option<extern "C" fn
-                              (arg1: HSQUIRRELVM, arg2: SQInteger,
-                               arg3: *const SQChar, arg4: SQInteger,
-                               arg5: *const SQChar) -> ()>;
-pub type SQWRITEFUNC =
-    ::std::option::Option<extern "C" fn
-                              (arg1: SQUserPointer, arg2: SQUserPointer,
-                               arg3: SQInteger) -> SQInteger>;
-pub type SQREADFUNC =
-    ::std::option::Option<extern "C" fn
-                              (arg1: SQUserPointer, arg2: SQUserPointer,
-                               arg3: SQInteger) -> SQInteger>;
-pub type SQLEXREADFUNC =
-    ::std::option::Option<extern "C" fn(arg1: SQUserPointer) -> SQInteger>;
+pub type SQFUNCTION = Option<extern "C" fn(arg1: HSQUIRRELVM) -> SQInteger>;
+pub type SQRELEASEHOOK = Option<extern "C" fn(arg1: SQUserPointer, size: SQInteger) -> SQInteger>;
+pub type SQCOMPILERERROR = Option<extern "C" fn(arg1: HSQUIRRELVM, arg2: *const SQChar, arg3: *const SQChar, arg4: SQInteger, arg5: SQInteger) -> ()>;
+pub type SQPRINTFUNCTION = Option<extern "C" fn(arg1: HSQUIRRELVM, arg2: *const SQChar, ...) -> ()>;
+pub type SQDEBUGHOOK = Option<extern "C" fn(arg1: HSQUIRRELVM, arg2: SQInteger, arg3: *const SQChar, arg4: SQInteger, arg5: *const SQChar) -> ()>;
+pub type SQWRITEFUNC = Option<extern "C" fn(arg1: SQUserPointer, arg2: SQUserPointer, arg3: SQInteger) -> SQInteger>;
+pub type SQREADFUNC = Option<extern "C" fn(arg1: SQUserPointer, arg2: SQUserPointer, arg3: SQInteger) -> SQInteger>;
+pub type SQLEXREADFUNC = Option<extern "C" fn(arg1: SQUserPointer) -> SQInteger>;
+
+
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct_tagSQRegFunction {
@@ -187,12 +185,14 @@ pub struct Struct_tagSQRegFunction {
     pub nparamscheck: SQInteger,
     pub typemask: *const SQChar,
 }
-impl ::std::default::Default for Struct_tagSQRegFunction {
+impl Default for Struct_tagSQRegFunction {
     fn default() -> Struct_tagSQRegFunction {
-        unsafe { ::std::mem::zeroed() }
+        unsafe { zeroed() }
     }
 }
 pub type SQRegFunction = Struct_tagSQRegFunction;
+
+
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct_tagSQFunctionInfo {
@@ -200,12 +200,13 @@ pub struct Struct_tagSQFunctionInfo {
     pub name: *const SQChar,
     pub source: *const SQChar,
 }
-impl ::std::default::Default for Struct_tagSQFunctionInfo {
+impl Default for Struct_tagSQFunctionInfo {
     fn default() -> Struct_tagSQFunctionInfo {
-        unsafe { ::std::mem::zeroed() }
+        unsafe { zeroed() }
     }
 }
 pub type SQFunctionInfo = Struct_tagSQFunctionInfo;
+
 
 extern "C" {
     pub fn sq_open(initialstacksize: SQInteger) -> HSQUIRRELVM;
@@ -336,9 +337,9 @@ extern "C" {
     pub fn sq_resurrectunreachable(v: HSQUIRRELVM) -> SQRESULT;
     pub fn sq_writeclosure(vm: HSQUIRRELVM, writef: SQWRITEFUNC, up: SQUserPointer) -> SQRESULT;
     pub fn sq_readclosure(vm: HSQUIRRELVM, readf: SQREADFUNC, up: SQUserPointer) -> SQRESULT;
-    pub fn sq_malloc(size: SQUnsignedInteger) -> *mut ::libc::c_void;
-    pub fn sq_realloc(p: *mut ::libc::c_void, oldsize: SQUnsignedInteger, newsize: SQUnsignedInteger) -> *mut ::libc::c_void;
-    pub fn sq_free(p: *mut ::libc::c_void, size: SQUnsignedInteger) -> ();
+    pub fn sq_malloc(size: SQUnsignedInteger) -> *mut c_void;
+    pub fn sq_realloc(p: *mut c_void, oldsize: SQUnsignedInteger, newsize: SQUnsignedInteger) -> *mut c_void;
+    pub fn sq_free(p: *mut c_void, size: SQUnsignedInteger) -> ();
     pub fn sq_stackinfos(v: HSQUIRRELVM, level: SQInteger, si: *mut SQStackInfos) -> SQRESULT;
     pub fn sq_setdebughook(v: HSQUIRRELVM) -> ();
     pub fn sq_setnativedebughook(v: HSQUIRRELVM, hook: SQDEBUGHOOK) -> ();
@@ -346,5 +347,5 @@ extern "C" {
     // HELPER
     pub fn sq_helper_setup_default_callbacks(v: HSQUIRRELVM) -> ();
     pub fn sq_helper_eval(v: HSQUIRRELVM, source: *const SQChar) -> ();
-    pub fn sq_helper_get_null() -> *mut ::libc::c_void;
+    pub fn sq_helper_get_null() -> *mut c_void;
 }

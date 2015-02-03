@@ -55,6 +55,7 @@ impl VM {
             ffi::sq_pushstring(self.raw, c_name.as_slice_with_nul().as_ptr(), -1);
             let user_ptr = ffi::sq_newuserdata(self.raw, mem::size_of::<F>() as ffi::SQUnsignedInteger);
             ptr::write(mem::transmute(user_ptr), func);
+            //ffi::sq_settypetag(self.raw, -1, TypeId::of<F>());
             ffi::sq_newclosure(self.raw, Some(wrapper), 1);
             ffi::sq_newslot(self.raw, -3, 0);
             ffi::sq_pop(self.raw, 1);
