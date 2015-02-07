@@ -4,6 +4,7 @@ extern crate libc;
 use std::ffi::CString;
 use std::mem;
 use std::ptr;
+use std::collections::{HashMap};
 
 #[allow(dead_code, non_camel_case_types, raw_pointer_derive, non_snake_case, missing_copy_implementations)]
 mod ffi;
@@ -13,11 +14,11 @@ mod wrapper {
     use ::ffi;
     use ::libc;
 
-    pub extern "C" fn func0<F, R>(vm: ffi::HSQUIRRELVM) -> ffi::SQInteger where F: Fn() -> R {
+    pub extern "C" fn func0<F, R>(vm: ffi::HSQUIRRELVM) -> ffi::SQInteger where F: FnMut() -> R {
         unsafe {
             let ptr: ffi::SQUserPointer = ffi::sq_helper_get_null();
             ffi::sq_getuserdata(vm, -1, mem::transmute(&ptr), ffi::sq_helper_get_null() as *mut ffi::SQUserPointer);
-            let func_ptr: *const F = ptr as *const libc::c_void as *const F;
+            let func_ptr: *mut F = ptr as *mut libc::c_void as *mut F;
             (*func_ptr)();
         }
         0
@@ -26,6 +27,7 @@ mod wrapper {
 
 pub struct VM {
     raw: ffi::HSQUIRRELVM,
+    registered_classes: HashMap<u64, ClassData>,
 }
 
 impl VM {
@@ -33,7 +35,10 @@ impl VM {
         unsafe {
             let vm = ffi::sq_open(1024);
             ffi::sq_helper_setup_default_callbacks(vm);
-            VM { raw: vm }
+            VM {
+                raw: vm,
+                registered_classes: HashMap::new(),
+            }
         }
     }
 
@@ -44,7 +49,7 @@ impl VM {
         }
     }
 
-    pub fn func0<F, R>(&mut self, name: &str, func: F) where F: Fn() -> R {
+    pub fn func0<F, R>(&mut self, name: &str, func: F) where F: FnMut() -> R {
         self.push_function(name, func, wrapper::func0::<F, R>);
     }
 
@@ -70,6 +75,13 @@ impl Drop for VM {
             ffi::sq_close(self.raw);
         }
     }
+}
+
+#[allow(missing_copy_implementations)]
+pub struct ClassData {
+    object: ffi::HSQOBJECT,
+    get_table: ffi::HSQOBJECT,
+    set_table: ffi::HSQOBJECT,
 }
 
 #[test]
